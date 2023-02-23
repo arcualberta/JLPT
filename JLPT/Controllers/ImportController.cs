@@ -16,8 +16,9 @@ namespace JLPT.Controllers
         }
 
         [HttpPost]
-        public ActionResult PopulateMasterData(Guid id)
+        public ActionResult PopulateMasterData(IFormFile file)
         {
+            _importDataSrv.PopulateMasterData(file);
             return Ok();
         }
 

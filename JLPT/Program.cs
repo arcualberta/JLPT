@@ -1,4 +1,6 @@
 using JLPT;
+using JLPT.Interfaces;
+using JLPT.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 ConfigurationManager configuration = builder.Configuration;
 string sqlConnectionString = configuration.GetConnectionString("jlpt");
-builder.Services.AddDbContext<JLPTDbContext>(options => options.UseSqlServer(sqlConnectionString));
+
+builder.Services.AddScoped<IImportData, ImportData>();
 
 var app = builder.Build();
 
