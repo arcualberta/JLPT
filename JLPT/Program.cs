@@ -9,6 +9,9 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+ConfigurationManager configuration = builder.Configuration;
+string sqlConnectionString = configuration.GetConnectionString("jlpt");
+builder.Services.AddDbContext<JLPTDbContext>(options => options.UseSqlServer(sqlConnectionString));
 
 var app = builder.Build();
 
@@ -18,9 +21,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-ConfigurationManager configuration = builder.Configuration;
-string sqlConnectionString = configuration.GetConnectionString("jlpt");
-builder.Services.AddDbContext<JLPTDbContext>(options => options.UseSqlServer(sqlConnectionString));
 
 app.UseHttpsRedirection();
 

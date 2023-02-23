@@ -8,11 +8,5 @@ namespace JLPT
         public JLPTDbContext(DbContextOptions<RepoDbContext> options) : base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-
-        }
     }
 }
