@@ -34,3 +34,6 @@
 /JLPT/bin/
 JLPT/obj/
 appsettings.json
+/.vs/
+/JLPTProcessor/bin/
+/JLPTProcessor/obj/
