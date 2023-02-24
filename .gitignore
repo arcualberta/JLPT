@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/JLPT/.vs/
+/JLPT/bin/
+JLPT/obj/
+appsettings.json
