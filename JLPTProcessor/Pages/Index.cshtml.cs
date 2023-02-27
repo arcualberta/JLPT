@@ -36,7 +36,7 @@ namespace JLPTProcessor.Pages
         public void OnPostProcessReport()
         {
             //Generate CVS files similar to old subline
-            string folderRoot = "C:\\Projects\\JLPT";
+            string folderRoot = Path.Combine("App_Data/", "Output");
             if (!(System.IO.Directory.Exists(folderRoot)))
                 System.IO.Directory.CreateDirectory(folderRoot);
             string outFile = "";
@@ -67,7 +67,7 @@ namespace JLPTProcessor.Pages
                 };
                 DataSet dataSet = excelDataReader.AsDataSet(conf);
                 
-                DataRowCollection rows = dataSet.Tables["Attendees"].Rows;
+                DataRowCollection rows = dataSet.Tables["Orders"].Rows;
                 //get the status of the registration and email address 
                 //for test data only process those "confirmed" status
                 for (int i = 0; i < rows.Count; i++)//foreach (DataRow row in rows)
@@ -77,17 +77,18 @@ namespace JLPTProcessor.Pages
                     if (i >= 5)//ignore header
                     {
                         var cols = rows[i].ItemArray.ToList();
-                        if (cols[6]?.ToString() == "confirmed") //RegistrationStatus
+                        if ((bool)(cols[8]?.ToString().Equals("Stripe Paid", StringComparison.CurrentCultureIgnoreCase))) //Orders' Status
                         {
                             string usrEmail = cols[3].ToString();
+                            string testLevel = cols[5].ToString();
                             if (ReportType == "Master")
                             {
-                                result = processMasterQuestionaire(dataSet, usrEmail);
+                                result = processMasterQuestionaire(dataSet, usrEmail, testLevel);
                                 System.IO.File.AppendAllText(outFile, $"{result}.{Environment.NewLine}"); //print the header
                             }
                             else
                             {
-                                result = processRegistrationQuestionaire(dataSet, usrEmail);
+                                result = processRegistrationQuestionaire(dataSet, usrEmail, testLevel);
                                 System.IO.File.AppendAllText(outFile, $"{result}.{Environment.NewLine}"); //print the header
                             }
                             
@@ -96,9 +97,9 @@ namespace JLPTProcessor.Pages
                 }
             }
         }
-        private string processRegistrationQuestionaire(DataSet dataSet, string email) //Registration Report
+        private string processRegistrationQuestionaire(DataSet dataSet, string email, string testLevel) //Registration Report
         {
-            string testLevel = GetTestLevel(dataSet, email);
+            //string testLevel = GetTestLevel(dataSet, email);
             int sqNum = 0;
             if (testLevel.Contains("1"))
             {
@@ -149,9 +150,9 @@ namespace JLPTProcessor.Pages
             return result;
         }
 
-        private string processMasterQuestionaire(DataSet dataSet, string email) //master Report
+        private string processMasterQuestionaire(DataSet dataSet, string email, string testLevel) //master Report
         {
-            string testLevel = GetTestLevel(dataSet, email);
+            //string testLevel = GetTestLevel(dataSet, email);
             int sqNum = 0;
             if (testLevel.Contains("1"))
             {
@@ -183,7 +184,7 @@ namespace JLPTProcessor.Pages
             DataRowCollection rows = dataSet.Tables["Questions"].Rows;
 
             string result = "";
-            result = sqNum.ToString() + "," + testLevel + ",";
+            result = "\"" + sqNum.ToString() + "\",\"" + testLevel + "\",";
 
 
             int startRow = 5; //NOT include the headers
