@@ -1,5 +1,5 @@
 "Sequence No.","Level"," First Name", "Last Name","DOB Year","DOB Month","DOB Day","Street","City","Province","Country","Postal","Email",	"Affiliation"," Registration Type","Times Taking N1","Times Taking N2","Times Taking N3","Times Taking N4","Times Taking N5","Latest N1 Result","Latest N2 Result","Latest N3 Result","	Latest N4 Result","Latest N5 Result".
-"40001","N4","AWE","FOUR","2012",02,22,"123 fd","edmonton","ab","canada","j7h 8h6","four@email.com","Other High School outside of Alberta Other (including private tutors and self-studying)","pay","0","1","1","0","0","0","1","1","0","0".
-"10001","N1","SNOW","LEOPARD","2023",02,22,"123 street","calgary","Ab","canada","g7j 9k8","student1@email.com","University of Calgary","pay","0","0","0","0","0","0","0","0","0","0".
-"30001","N3","MELANIA","TEST","2010",05,12,"street address 111","edmonton","AB","Canada","J8K 9K8","melaniaTest@email.com"," University of Alberta","pay","0","1","0","0","0","0","1","0","0","0".
-"20001","N2","LEVEL","TWO","2017",08,22,"123 street","City","AB","Canada","h6h 4d4","lev2@email.com","University of Lethbridge","pay","1","0","0","0","0","1","0","0","0","0".
+"40001","N4","AWE","FOUR","2012",02,22,"123 fd","edmonton","ab","canada","j7h 8h6","four@email.com","Other High School outside of Alberta Other (including private tutors and self-studying)","Stripe Paid","0","1","1","0","0","0","1","1","0","0".
+"10001","N1","SNOW","LEOPARD","2023",02,22,"123 street","calgary","Ab","canada","g7j 9k8","student1@email.com","University of Calgary","Stripe Paid","0","0","0","0","0","0","0","0","0","0".
+"30001","N3","MELANIA","TEST","2010",05,12,"street address 111","edmonton","AB","Canada","J8K 9K8","melaniaTest@email.com"," University of Alberta","Stripe Paid","0","1","0","0","0","0","1","0","0","0".
+"20001","N2","LEVEL","TWO","2017",08,22,"123 street","City","AB","Canada","h6h 4d4","lev2@email.com","University of Lethbridge","Stripe Paid","1","0","0","0","0","1","0","0","0","0".

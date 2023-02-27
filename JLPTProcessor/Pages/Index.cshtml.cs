@@ -212,7 +212,7 @@ namespace JLPTProcessor.Pages
         private string extractDataMaster(DataRow row,  string email)
         {
             string result = "";
-            string street="", city="", prov="", country="", postal="", phone="", registrationType="pay";
+            string street="", city="", prov="", country="", postal="", phone="", registrationType="Stripe Paid";
             string afiliation="";
             string[] timeTakingTest = {"0", "0" , "0" , "0" , "0" }; //new string[5]; //contain time of taking test l1-5 -- in order
             string[] resultTakingTest = { "0", "0", "0", "0", "0" }; //new string[5]; //contain lat result of taking test l1-5 -- in order
