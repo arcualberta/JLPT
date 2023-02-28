@@ -49,9 +49,9 @@ namespace JLPTProcessor.Pages
                 System.IO.File.Create(outFile).Close();
 
             if (ReportType == "Master")
-                System.IO.File.AppendAllText(outFile, $"{getMasterReportHeaders()}.{Environment.NewLine}"); //print the header
+                System.IO.File.AppendAllText(outFile, $"{getMasterReportHeaders()}{Environment.NewLine}"); //print the header
             else
-                System.IO.File.AppendAllText(outFile, $"{getRegistrationReportHeaders()}.{Environment.NewLine}"); //print the header
+                System.IO.File.AppendAllText(outFile, $"{getRegistrationReportHeaders()}{Environment.NewLine}"); //print the header
 
             // string reportType= Request.Form["ReportType"];
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -84,12 +84,12 @@ namespace JLPTProcessor.Pages
                             if (ReportType == "Master")
                             {
                                 result = processMasterQuestionaire(dataSet, usrEmail, testLevel);
-                                System.IO.File.AppendAllText(outFile, $"{result}.{Environment.NewLine}"); //print the header
+                                System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                             }
                             else
                             {
-                                result = processRegistrationQuestionaire(dataSet, usrEmail, testLevel);
-                                System.IO.File.AppendAllText(outFile, $"{result}.{Environment.NewLine}"); //print the header
+                                result = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(testLevel));
+                                System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                             }
                             
                         }
@@ -552,6 +552,23 @@ namespace JLPTProcessor.Pages
             return testL;
         }
 
+        private string getNumericTestLevel(string testLevel)
+        {
+            // string testLevel = cols[5] != null ? (string)cols[5] : null; //ITem Name /ticket's name
+            string testL = "";
+            if (testLevel.Contains("N1"))
+                testL = "1";
+            else if (testLevel.Contains("N2"))
+                testL = "2";
+            else if (testLevel.Contains("N3"))
+                testL = "3";
+            else if (testLevel.Contains("N4"))
+                testL = "4";
+            else if (testLevel.Contains("N5"))
+                testL = "5";
+
+            return testL;
+        }
         private string getRegistrationReportHeaders()
         {
             return "\"Test Level\",\"Year Code\",\"Test Site\",\"Test Level\",\"Sequence No.\",\"Full Name\",\"Sex\",\"DOB Year\",\"DOB Month\",\"DOB Day\",\"Password\",\"Native Language\",\"Learning Place\",\"Reason\",\"Occupation\",\"Occupation Details\",\"Media\",	\"With Teachers\",	\"With Friends\",\"With Family\",\"With Supervisor\",\"With Colleagues\",\"With Customers\",\"Times Taking N1\",\"Times Taking N2\",\"Times Taking N3\",\"Times Taking N4\",\"Times Taking N5\",\"Latest N1 Result\",\"Latest N2 Result\",\"Latest N3 Result\",\"Latest N4 Result\",\"Latest N5 Result\"";
