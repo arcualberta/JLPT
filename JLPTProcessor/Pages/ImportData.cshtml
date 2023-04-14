@@ -1,0 +1,11 @@
+﻿@page
+@model ImportDataModel
+@{
+    ViewData["Title"] = "Import JLPT Data";
+}
+<h1>@ViewData["Title"]</h1>
+
+<form asp-page-handler="PopulateUserData" method="post">
+   
+   <button type="submit" class="btn btn-primary" >Populate User Data</button>
+</form>

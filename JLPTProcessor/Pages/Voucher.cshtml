@@ -1,0 +1,11 @@
+﻿@page
+@model VoucherModel
+@{
+    ViewData["Title"] = "JLPT Voucher";
+}
+<h1>@ViewData["Title"]</h1>
+
+<form asp-page-handler="PopulateUserData" method="post">
+   
+   <button type="submit" class="btn btn-primary" >Populate User Data</button>
+</form>

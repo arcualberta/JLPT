@@ -1,7 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+//using Microsoft.AspNetCore.Mvc;
+using JLPT;
+using JLPT.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigurationManager configuration = builder.Configuration;
+
+// Entity Framework
+builder.Services.AddDbContext<JlptDbContext>(options
+    => options.UseSqlServer(configuration.GetConnectionString("JlptConnectionString")!));
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddControllersAsServices();
+builder.Services.AddControllers();
+
+//Add services
+builder.Services.AddScoped<IUserDataInterface, UserDataService>();
 
 var app = builder.Build();
 

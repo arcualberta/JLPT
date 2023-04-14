@@ -290,27 +290,27 @@ namespace JLPTProcessor.Pages
                 }
                 else if (j == 32) //col 33 -- street
                 {
-                    street = cols[j].ToString();
+                    street = cols[j].ToString().Trim().Replace(",", " - ");
                 }
                 else if (j == 34) //col 33 -- city
                 {
-                    city = cols[j].ToString();
+                    city = cols[j].ToString().Trim();
                 }
                 else if (j == 35) //col 33 -- prov
                 {
-                    prov = cols[j].ToString();
+                    prov = cols[j].ToString().Trim();
                 }
                 else if (j == 36) //col 33 -- country
                 {
-                    country = cols[j].ToString();
+                    country = cols[j].ToString().Trim();
                 }
                 else if (j == 37) //col 33 -- postal
                 {
-                    postal = cols[j].ToString();
+                    postal = cols[j].ToString().Trim();
                 }
                 else if (j == 38) //col 33 -- phone
                 {
-                    phone = cols[j].ToString();
+                    phone = cols[j].ToString().Trim();
                 }
 
             }
