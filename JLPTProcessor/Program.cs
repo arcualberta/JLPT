@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 
 //Add services
 builder.Services.AddScoped<IUserDataInterface, UserDataService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 

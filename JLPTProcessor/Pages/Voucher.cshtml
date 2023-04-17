@@ -1,5 +1,6 @@
 ﻿@page
 @model VoucherModel
+
 @{
     ViewData["Title"] = "JLPT Voucher";
 }
@@ -7,5 +8,50 @@
 
 <form asp-page-handler="PopulateUserData" method="post">
    
-   <button type="submit" class="btn btn-primary" >Populate User Data</button>
+   <button type="submit" class="btn btn-primary" style="display: none" >Populate User Data</button>
 </form>
+<div>
+    Max Items: <input type="number" name="MaxItems" />
+</div>
+<div>Selected : @Model.SelectedUserIds?.Count</div>
+<form asp-page-handler="SendEmail" method="post">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><input type="checkbox" value="Check All" name="checkAll" onclick="SelectAll()"/></th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>TestLevel</th>
+                 <th>SequenceNumber</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach(var usr in Model.Users)
+                {
+                                <tr>
+                                  <td><input type="checkbox" name="SelectedUserIds" value="@usr.Id" /></td>
+                                   <td>@usr.FirstName</td>
+                                    <td>@usr.LastName</td>
+                                     <td>@usr.TestLevel</td>
+                                     <td>@usr.SequenceNumber</td>
+                                </tr>
+                   
+                }
+            }
+        </tbody>
+    </table>
+   
+   <button type="submit" class="btn btn-primary" >Send Email</button>
+</form>
+
+<script>
+    function SelectAll(){
+        var els = document.getElementsByName("SelectedUserIds");
+        els.forEach(el => {
+            el.checked = !el.checked;
+        })
+    }
+
+</script>

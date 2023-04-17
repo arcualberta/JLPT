@@ -6,11 +6,12 @@ namespace JLPT.Services
     public class UserDataService : IUserDataInterface
     {
         private readonly JlptDbContext _context;
-        public UserDataService()
-        {}
-        public UserDataService(JlptDbContext context)
+        private readonly IEmailService _emailService;
+       
+        public UserDataService(JlptDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public void PopulateUserData()
@@ -82,6 +83,47 @@ namespace JLPT.Services
         private string getEmail(string content)
         {
             return content.Split(",")[12];
+        }
+
+        public List<UserInfo> GetUserData(int maxItems)
+        {
+            return _context.UsersInfo!.Where(u=>u.IsEmailSent == false).Take(maxItems).ToList();
+        }
+
+        public bool SendEmail(string email, string body)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendEmails(List<int> selectedUserIds)
+        {
+            bool success = false;
+            try
+            {
+                string body = _emailService.ReadEmailBody();
+                List<UserInfo> users = GetSelectedUserData(selectedUserIds);
+                foreach (var user in users)
+                {
+                    //send email one by one
+                    _emailService.SendEmail(user, body);
+
+                    //upon successful sending the email out -- set the "isSEndEmail" flag to "true"
+                    user.IsEmailSent = true;
+                    _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                }
+                _context.SaveChanges();
+                success = true; 
+            }
+            catch(Exception ex)
+            {
+                success = false;
+            }
+            return success;
+        }
+
+        public List<UserInfo> GetSelectedUserData(List<int> selectedUserIds)
+        {
+           return _context.UsersInfo!.Where(u=> selectedUserIds.Contains(u.Id)).ToList();
         }
     }
 }
