@@ -6,16 +6,18 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<form asp-page-handler="PopulateUserData" method="post">
-   
-   <button type="submit" class="btn btn-primary" style="display: none" >Populate User Data</button>
-</form>
-<div>
-    Max Items: <input type="number" name="MaxItems" />
-</div>
-<div>Selected : @Model.SelectedUserIds?.Count</div>
-<form asp-page-handler="SendEmail" method="post">
 
+<form asp-page-handler="PopulateUserData" method="get">
+   
+   <div style="float:right">
+      Max Items <input type="number" id="maxItems"  name="MaxItems" asp-for="@Model.MaxItems" />
+      <input type="submit" value="Refresh" class="btn button-success" />
+   </div>
+
+</form>
+
+<form  method="post">
+   
     <table class="table table-striped">
         <thead>
             <tr>
@@ -43,7 +45,8 @@
         </tbody>
     </table>
    
-   <button type="submit" class="btn btn-primary" >Send Email</button>
+   <button type="submit" class="btn btn-primary" asp-page-handler="SendEmail">Send Email</button>
+   <button type="submit" class="btn btn-warning" asp-page-handler="SendTestEmail">Send Test Email</button>
 </form>
 
 <script>

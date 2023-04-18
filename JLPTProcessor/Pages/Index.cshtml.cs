@@ -72,7 +72,7 @@ namespace JLPTProcessor.Pages
                 //for test data only process those "confirmed" status
                 for (int i = 0; i < rows.Count; i++)//foreach (DataRow row in rows)
                 {
-                    string result = "";
+                   // string result = "";
                   
                     if (i >= 5)//ignore header
                     {
@@ -83,13 +83,15 @@ namespace JLPTProcessor.Pages
                             string testLevel = cols[5].ToString();
                             if (ReportType == "Master")
                             {
-                                result = processMasterQuestionaire(dataSet, usrEmail, testLevel);
-                                System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
+                                List<string> results = processMasterQuestionaire(dataSet, usrEmail, testLevel);
+                                foreach(string result in results)
+                                    System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                             }
                             else
                             {
-                                result = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(testLevel));
-                                System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
+                                List<string> results = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(testLevel));
+                                foreach(string result in results)
+                                    System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                             }
                             
                         }
@@ -97,116 +99,129 @@ namespace JLPTProcessor.Pages
                 }
             }
         }
-        private string processRegistrationQuestionaire(DataSet dataSet, string email, string testLevel) //Registration Report
+        private List<string> processRegistrationQuestionaire(DataSet dataSet, string email, string testLevels) //Registration Report
         {
             //string testLevel = GetTestLevel(dataSet, email);
-            int sqNum = 0;
-            if (testLevel.Contains("1"))
+            List<string> results = new List<string>();
+            string[] multiLevels = testLevels.Split(",");
+            foreach (string testLevel in multiLevels)
             {
-                CountLvl1++;
-                sqNum = CountLvl1;
-            }
-            else if (testLevel.Contains("2"))
-            {
-                CountLvl2++;
-                sqNum = CountLvl2;
-            }
-            else if (testLevel.Contains("3"))
-            {
-                CountLvl3++;
-                sqNum =CountLvl3;
-            }
-            else if (testLevel.Contains("4"))
-            {
-                CountLvl4++;
-                sqNum =CountLvl4;
-            }
-            else if (testLevel.Contains("5"))
-            {
-                CountLvl5++;
-                sqNum = CountLvl5;
-            }
-
-
-
-            DataRowCollection rows = dataSet.Tables["Questions"].Rows;
-
-            string result = "";
-            string seqFormat = "0000"; //seguence number to be padd with leading 0 with 4 digits length
-            result = "\"" + testLevel + "\",\"" + YearType + "\",\"" + TestSiteCode + "\",\"" + testLevel + "\",\"" + sqNum.ToString(seqFormat) + "\",";
-
-            for (int i = 5; i < rows.Count; i++)//foreach (DataRow row in rows)
-            {
-                var cols = rows[i].ItemArray.ToList();
-                if (cols[3] == email)//start redaing from line 6 -- headers
+                int sqNum = 0;
+                if (testLevel.Contains("1"))
                 {
-                    result += extractRegistrationData(rows[i], email);
-                    break;
+                    CountLvl1++;
+                    sqNum = CountLvl1;
+                }
+                else if (testLevel.Contains("2"))
+                {
+                    CountLvl2++;
+                    sqNum = CountLvl2;
+                }
+                else if (testLevel.Contains("3"))
+                {
+                    CountLvl3++;
+                    sqNum = CountLvl3;
+                }
+                else if (testLevel.Contains("4"))
+                {
+                    CountLvl4++;
+                    sqNum = CountLvl4;
+                }
+                else if (testLevel.Contains("5"))
+                {
+                    CountLvl5++;
+                    sqNum = CountLvl5;
                 }
 
 
-            }
 
-            return result;
+                DataRowCollection rows = dataSet.Tables["Questions"].Rows;
+
+                string result = "";
+                string seqFormat = "0000"; //seguence number to be padd with leading 0 with 4 digits length
+                result = "\"" + testLevel + "\",\"" + YearType + "\",\"" + TestSiteCode + "\",\"" + testLevel + "\",\"" + sqNum.ToString(seqFormat) + "\",";
+
+                for (int i = 5; i < rows.Count; i++)//foreach (DataRow row in rows)
+                {
+                    var cols = rows[i].ItemArray.ToList();
+                    if (cols[3] == email)//start redaing from line 6 -- headers
+                    {
+                        result += extractRegistrationData(rows[i], email);
+                        break;
+                    }
+
+
+                }
+
+                results.Add(result);
+            }
+            return results;
         }
 
-        private string processMasterQuestionaire(DataSet dataSet, string email, string testLevel) //master Report
+        private List<string> processMasterQuestionaire(DataSet dataSet, string email, string testLevels) //master Report
         {
-            //string testLevel = GetTestLevel(dataSet, email);
-            int sqNum = 0;
-            if (testLevel.Contains("1"))
+            List<string> results = new List<string>();
+            string[] multiLevels = testLevels.Split(",");
+            foreach (string testLevel in multiLevels)
             {
-                CountLvl1++;
-                sqNum = (10000 + CountLvl1);
-            }
-            else if (testLevel.Contains("2"))
-            {
-                CountLvl2++;
-                sqNum = (20000 + CountLvl2);
-            }
-            else if (testLevel.Contains("3"))
-            {
-                CountLvl3++;
-                sqNum = (30000 + CountLvl3);
-            }
-            else if (testLevel.Contains("4"))
-            {
-                CountLvl4++;
-                sqNum = (40000 + CountLvl4);
-            }
-            else if (testLevel.Contains("5"))
-            {
-                CountLvl5++;
-                sqNum = (50000 + CountLvl5);
-            }
-
-           
-            DataRowCollection rows = dataSet.Tables["Questions"].Rows;
-
-            string result = "";
-            result = "\"" + sqNum.ToString() + "\",\"" + testLevel + "\",";
 
 
-            int startRow = 5; //NOT include the headers
-            if (ReportType == "Master")
-            {
-                //Read the header too == include header
-                startRow = 4;
-            }
-
-            for (int i = 0; i < rows.Count; i++)//foreach (DataRow row in rows)
-            {
-                var cols = rows[i].ItemArray.ToList();
-                if (cols[3] == email)//start redaing from line 6 -- headers
+                int sqNum = 0;
+                if (testLevel.Contains("1"))
                 {
-                    result += extractDataMaster(rows[i], email);
-                    break;
+                    CountLvl1++;
+                    sqNum = (10000 + CountLvl1);
                 }
-                   
-                
-            }
+                else if (testLevel.Contains("2"))
+                {
+                    CountLvl2++;
+                    sqNum = (20000 + CountLvl2);
+                }
+                else if (testLevel.Contains("3"))
+                {
+                    CountLvl3++;
+                    sqNum = (30000 + CountLvl3);
+                }
+                else if (testLevel.Contains("4"))
+                {
+                    CountLvl4++;
+                    sqNum = (40000 + CountLvl4);
+                }
+                else if (testLevel.Contains("5"))
+                {
+                    CountLvl5++;
+                    sqNum = (50000 + CountLvl5);
+                }
 
-            return result;
+
+                DataRowCollection rows = dataSet.Tables["Questions"].Rows;
+
+                string result = "";
+                result = "\"" + sqNum.ToString() + "\",\"" + testLevel + "\",";
+
+
+                int startRow = 5; //NOT include the headers
+                if (ReportType == "Master")
+                {
+                    //Read the header too == include header
+                    startRow = 4;
+                }
+
+                for (int i = 0; i < rows.Count; i++)//foreach (DataRow row in rows)
+                {
+                    var cols = rows[i].ItemArray.ToList();
+                    if (cols[3] == email)//start redaing from line 6 -- headers
+                    {
+                        result += extractDataMaster(rows[i], email);
+                        break;
+                    }
+
+
+                }
+
+                results.Add(result);
+            }
+            return results;
         }
 
         private string extractDataMaster(DataRow row,  string email)

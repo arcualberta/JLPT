@@ -27,7 +27,7 @@ namespace JLPTProcessor.Pages
         public List<int> SelectedUserIds { get; set; }
 
         [BindProperty]
-        public int MaxItems { get; set; } = 3;
+        public int MaxItems { get; set; } = 50;
         public void OnGet()
         {
             Users = _userData.GetUserData(MaxItems);
@@ -39,6 +39,13 @@ namespace JLPTProcessor.Pages
         public void OnPostSendEmail()
         {
             _userData.SendEmails(SelectedUserIds);
+
+            Users = _userData.GetUserData(MaxItems);
+        }
+
+        public void OnPostSendTestEmail()
+        {
+            _userData.SendEmails(SelectedUserIds, true);//set true for "testEmail"
 
             Users = _userData.GetUserData(MaxItems);
         }

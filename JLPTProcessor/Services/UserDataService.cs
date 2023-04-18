@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using LumenWorks.Framework.IO.Csv;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace JLPT.Services
 {
@@ -26,7 +29,31 @@ namespace JLPT.Services
             if (!File.Exists(sourceFile))
                 File.Create(sourceFile).Close();
 
-            string[] lines = File.ReadAllLines(sourceFile);
+            using (CsvReader csv=new CsvReader(new StreamReader(sourceFile), true))
+            {
+                int fieldCount = csv.FieldCount;
+
+                string[] headers = csv.GetFieldHeaders();
+               // int count = 0;
+                while (csv.ReadNextRecord())
+                {
+                    // count++;
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.TestLevel = csv["Level"];
+                    userInfo.Email = csv["Email"];
+
+                    userInfo.FirstName = csv[" First Name"];
+                    userInfo.LastName = csv["Last Name"];
+                    userInfo.SequenceNumber = csv["Sequence No."];
+                    userInfo.DOB = csv["DOB Year"] + "-" + csv["DOB Month"] + "-" + csv["DOB Day"];
+
+                    _context.UsersInfo!.Add(userInfo);
+                }
+
+                _context.SaveChanges();
+            }
+
+         /*   string[] lines = File.ReadAllLines(sourceFile);
 
             string line = "";
            
@@ -54,7 +81,7 @@ namespace JLPT.Services
                 throw ex;
             }
 
-
+            */
         }
 
         private string getSquenceNo(string content)
@@ -85,17 +112,13 @@ namespace JLPT.Services
             return content.Split(",")[12];
         }
 
-        public List<UserInfo> GetUserData(int maxItems)
+        public List<UserInfo> GetUserData(int maxItems=50)
         {
             return _context.UsersInfo!.Where(u=>u.IsEmailSent == false).Take(maxItems).ToList();
         }
 
-        public bool SendEmail(string email, string body)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SendEmails(List<int> selectedUserIds)
+      
+        public bool SendEmails(List<int> selectedUserIds, bool testEmail = false)
         {
             bool success = false;
             try
@@ -105,7 +128,10 @@ namespace JLPT.Services
                 foreach (var user in users)
                 {
                     //send email one by one
-                    _emailService.SendEmail(user, body);
+                    if (testEmail)
+                        _emailService.SendTestEmail(user, body);
+                    else
+                        _emailService.SendEmail(user, body);
 
                     //upon successful sending the email out -- set the "isSEndEmail" flag to "true"
                     user.IsEmailSent = true;
