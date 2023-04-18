@@ -7,11 +7,12 @@
 <h1>@ViewData["Title"]</h1>
 
 
-<form asp-page-handler="PopulateUserData" method="get">
+<form  method="get">
    
    <div style="float:right">
       Max Items <input type="number" id="maxItems"  name="MaxItems" asp-for="@Model.MaxItems" />
-      <input type="submit" value="Refresh" class="btn button-success" />
+     
+      <button type="submit" class="btn btn-success">Refresh </button>
    </div>
 
 </form>

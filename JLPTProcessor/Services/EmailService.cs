@@ -88,8 +88,8 @@ namespace JLPT.Services
                 //DEBUG ONLY
                 
                 mailMessage.To.Add(_testEmail);//send to "arcrcg@ualberta.ca"
-                mailMessage.CC.Add(_bccEmail);
-                mailMessage.Bcc.Add(_bccEmail);
+                //mailMessage.CC.Add(_bccEmail);
+                //mailMessage.Bcc.Add(_bccEmail);
                 using (SmtpClient client = new SmtpClient(_smtpServer, _smtpPort))
                 {
                     client.UseDefaultCredentials = true;
