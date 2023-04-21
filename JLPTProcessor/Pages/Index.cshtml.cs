@@ -397,15 +397,15 @@ namespace JLPTProcessor.Pages
                 {
                     string[] dob = cols[j].ToString().Split("-");
 
-                    result += "\"" + dob[0] + "\"," + dob[1] + "," + dob[2] + ",";
+                    result += "\"" + dob[0] + "\",\"" + dob[1] + "\",\"" + dob[2] + "\",";
                 }
                 else if (j == 6) //col 6r -- password
                 {
-                    result += "\"" + cols[j].ToString() + "\",\"";
+                    result += "\"" + cols[j].ToString().Trim() + "\",";
                 }
                 else if (j == 9) //col 6r -- Native lang
                 {
-                    result += getSingleSelectedCode(cols[j].ToString()) + "\",";
+                    result += "\"" + getSingleSelectedCode(cols[j].ToString()) + "\",";
                 }
                 else if (j == 10) //col 6r -- reason
                 {
