@@ -24,6 +24,9 @@ namespace JLPTProcessor.Pages
         
         [BindProperty]
         public int TestSiteCode { get; set; }
+       // [BindProperty]
+       // public IFormFile SourceFile { get; set; }
+
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
@@ -55,6 +58,7 @@ namespace JLPTProcessor.Pages
 
             // string reportType= Request.Form["ReportType"];
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
             using (var stream = System.IO.File.Open("all-data-groupize.xlsx", FileMode.Open, FileAccess.Read))
             {
                 IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
@@ -89,9 +93,13 @@ namespace JLPTProcessor.Pages
                             }
                             else
                             {
-                                List<string> results = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(testLevel));
-                                foreach(string result in results)
-                                    System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
+                                string[] testLevels = cols[5].ToString().Split(",");
+                                foreach (string tLevel in testLevels)
+                                {
+                                    List<string> results = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(tLevel));
+                                    foreach (string result in results)
+                                        System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
+                                }
                             }
                             
                         }
