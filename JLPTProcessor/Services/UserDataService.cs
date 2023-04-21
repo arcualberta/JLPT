@@ -129,15 +129,21 @@ namespace JLPT.Services
                 {
                     //send email one by one
                     if (testEmail)
+                    {
                         _emailService.SendTestEmail(user, body);
+                    }
                     else
+                    {
                         _emailService.SendEmail(user, body);
 
-                    //upon successful sending the email out -- set the "isSEndEmail" flag to "true"
-                    user.IsEmailSent = true;
-                    _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        //upon successful sending the email out -- set the "isSEndEmail" flag to "true"
+                        user.IsEmailSent = true;
+                        _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    }
                 }
-                _context.SaveChanges();
+                //only saveChanges when the email send for real
+                if(!testEmail)
+                    _context.SaveChanges();
                 success = true; 
             }
             catch(Exception ex)
