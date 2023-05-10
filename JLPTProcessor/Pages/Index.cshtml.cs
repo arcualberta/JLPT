@@ -1,14 +1,17 @@
 ﻿using ExcelDataReader;
+using JLPT.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data;
-using System.IO;
+using System.Web;
 
 namespace JLPTProcessor.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
+        private readonly IConfiguration _config;
+        private readonly IUserDataInterface _dataService;
         //counter Level
         private int CountLvl1 = 0;
         private int CountLvl2 = 0;
@@ -24,12 +27,14 @@ namespace JLPTProcessor.Pages
         
         [BindProperty]
         public int TestSiteCode { get; set; }
-       // [BindProperty]
-       // public IFormFile SourceFile { get; set; }
+        [BindProperty]
+       public IFormFile SourceFile { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, IConfiguration config, IUserDataInterface dataInterface)
         {
             _logger = logger;
+            _config = config;
+            _dataService = dataInterface;
         }
 
         public void OnGet()
@@ -39,14 +44,24 @@ namespace JLPTProcessor.Pages
         public void OnPostProcessReport()
         {
             //Generate CVS files similar to old subline
-            string folderRoot = Path.Combine("App_Data/", "Output");
+            string folderRoot = Path.Combine("AppData/", "Output");
             if (!(System.IO.Directory.Exists(folderRoot)))
                 System.IO.Directory.CreateDirectory(folderRoot);
             string outFile = "";
-            if(ReportType == "Master")
-                outFile = Path.Combine(folderRoot, "2023_July_Edmonton_Master.csv");
+            if (ReportType == "Master")
+            {
+                string masterFile = _config.GetSection("ReportSettings:MasterReportName").Value;
+                outFile = Path.Combine(folderRoot, masterFile/*"2023_July_Edmonton_Master.csv"*/);
+                if(System.IO.File.Exists(outFile))
+                    System.IO.File.Delete(outFile);
+            }
             else
-                outFile = Path.Combine(folderRoot, "2023_July_Edmonton.csv");
+            {
+                string surveyFile = _config.GetSection("ReportSettings:SurveyReportName").Value;
+                outFile = Path.Combine(folderRoot, surveyFile /*"2023_July_Edmonton.csv"*/);
+                if (System.IO.File.Exists(outFile))
+                    System.IO.File.Delete(outFile);
+            }
 
             if (!System.IO.File.Exists(outFile))
                 System.IO.File.Create(outFile).Close();
@@ -59,7 +74,25 @@ namespace JLPTProcessor.Pages
             // string reportType= Request.Form["ReportType"];
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            using (var stream = System.IO.File.Open("all-data-groupize.xlsx", FileMode.Open, FileAccess.Read))
+            string filePath = "";
+            if (SourceFile.Length > 0)
+            {
+                string uploads = Path.Combine(Directory.GetCurrentDirectory(), "AppData/Input");
+                if (!Directory.Exists(uploads))
+                {
+                    Directory.CreateDirectory(uploads);
+                }
+                filePath = Path.Combine(uploads, SourceFile.FileName);
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath); //if there's an old file with the same name -- delete it first before copy a new one
+
+                using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    //copy the source file to App_data/Input
+                    SourceFile.CopyTo(fileStream);
+                }
+            }
+            using (var stream = System.IO.File.Open(filePath/*"all-data-groupize.xlsx"*/, FileMode.Open, FileAccess.Read))
             {
                 IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
                 var conf = new ExcelDataSetConfiguration()
@@ -715,6 +748,31 @@ namespace JLPTProcessor.Pages
             selectedCodes = string.Join("", codes);
             return selectedCodes;
 
+        }
+
+        public void OnGetDownloadReport()
+        {
+            string fileName = "";
+           // if(reportType.Equals("Master"))
+                fileName = _config.GetSection("ReportSettings:MasterReportName").Value;
+           // else
+           //     fileName = _config.GetSection("ReportSettings:SurveyReportName").Value;
+
+            //return _dataService.GetFile(reportType);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), $@"AppData/Output/{fileName}");
+
+            //Content Type and Header.
+         /*   System.Web.HttpResponse response;*/
+            Response.ContentType = "text/csv";
+            // Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+            Response.Headers.Add("Content-Disposition", "attachment; filename=" + fileName);
+            //Writing the File to Response Stream.
+           // Response.WriteFile(filePath);
+           
+            //Flushing the Response.
+           // Response.Flush()
+           // Response.End();
+         
         }
     }
 }

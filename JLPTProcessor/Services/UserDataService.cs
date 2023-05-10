@@ -10,20 +10,22 @@ namespace JLPT.Services
     {
         private readonly JlptDbContext _context;
         private readonly IEmailService _emailService;
-       
-        public UserDataService(JlptDbContext context, IEmailService emailService)
+        private readonly IConfiguration _config;
+
+        public UserDataService(JlptDbContext context, IEmailService emailService, IConfiguration config)
         {
             _context = context;
             _emailService = emailService;
+            _config = config;
         }
 
         public void PopulateUserData()
         {
             //read data in "master file"
-            string folderRoot = Path.Combine("App_Data/", "Output");
+            string folderRoot = Path.Combine("AppData/", "Output");
             //var lines = (dynamic)null; 
-
-            string sourceFile = Path.Combine(folderRoot, "2023_July_Edmonton_Master.csv");
+            string fileName = _config.GetSection("ReportSettings:MasterReportName").Value;
+            string sourceFile = Path.Combine(folderRoot, fileName);
 
             
             if (!File.Exists(sourceFile))
@@ -156,6 +158,59 @@ namespace JLPT.Services
         public List<UserInfo> GetSelectedUserData(List<int> selectedUserIds)
         {
            return _context.UsersInfo!.Where(u=> selectedUserIds.Contains(u.Id)).ToList();
+        }
+
+        public bool IsFileExisted(string reportType)
+        {
+            string upload = Path.Combine(Directory.GetCurrentDirectory(), "AppData/Output");
+            string filePath = "";
+            if (reportType.Equals("Master"))
+            {
+                string fileName = _config.GetSection("ReportSettings:MasterReportName").Value;
+               filePath = Path.Combine(upload, fileName);
+            }
+            else
+            {
+                string fileName = _config.GetSection("ReportSettings:SurveyReportName").Value;
+                filePath = Path.Combine(upload, fileName);
+            }
+            return System.IO.File.Exists(filePath);
+        }
+        /// <summary>
+        /// download the report file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public FileContentResult GetFile(string reportType)
+        {
+            string upload = Path.Combine(Directory.GetCurrentDirectory(), "AppData/Output");
+            string filePath = "";
+            string fileName = "";
+            if (reportType.Equals("Master"))
+            {
+               fileName = _config.GetSection("ReportSettings:MasterReportName").Value;
+                filePath = Path.Combine(upload, fileName);
+            }
+            else
+            {
+                fileName = _config.GetSection("ReportSettings:SurveyReportName").Value;
+                filePath = Path.Combine(upload, fileName);
+            }
+             
+
+            string mimeType = "application/octet-stream";
+            byte[] fileBytes;
+            if (!System.IO.File.Exists(filePath))
+            {
+                throw new FileNotFoundException();
+            }
+            fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return new FileContentResult(fileBytes!, mimeType)
+            {
+                FileDownloadName = fileName
+            };
+           
         }
     }
 }

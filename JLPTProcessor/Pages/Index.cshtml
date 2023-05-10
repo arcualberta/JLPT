@@ -1,13 +1,24 @@
 ﻿@page
 @model IndexModel
+@using JLPT.Services
+@inject IUserDataInterface _userService
 @{
     ViewData["Title"] = "Home page";
+
+    bool masterReportReady = _userService.IsFileExisted("Master");
+    bool surveyReportReady = _userService.IsFileExisted("Survey");
 }
 
 <div class="text-center">
    <h3>JLPT Report</h3>
-   <form asp-page-handler="ProcessReport" method="post">
-    
+   <form asp-page-handler="ProcessReport" method="post" enctype="multipart/form-data">
+        <div class="row">
+          Source File: 
+            <input type ="file" id="sourceFile" class="form-control"  name="SourceFile"/>
+       </div>
+
+       <br/>
+
        <div class="row">
            Report Type: 
        <select class="col-md-2  form-control" name="ReportType">
@@ -26,7 +37,24 @@
           Test Site Code (UofA): 
             <input id="testSite" class="form-control" value="4010301" name="TestSiteCode"/>
        </div>
+       
+       
        <br/>
        <button type="submit" class="btn btn-primary" >Process</button>
    </form>
+   @* <form  method="get">
+@{
+   
+    if (masterReportReady)
+    {
+            <button asp-page-handler='DownloadReport' class="button-link">Master Report</button>
+    }
+
+    if (surveyReportReady)
+    {
+            <button onclick='#' class="button-link">Survey Report</button>
+    }
+  
+}
+  </form>*@
 </div>

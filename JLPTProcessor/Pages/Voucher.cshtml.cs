@@ -27,7 +27,7 @@ namespace JLPTProcessor.Pages
         public List<int> SelectedUserIds { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public int MaxItems { get; set; } = 50;
+        public int MaxItems { get; set; } = 25;
         public void OnGet()
         {
             Users = _userData.GetUserData(MaxItems);

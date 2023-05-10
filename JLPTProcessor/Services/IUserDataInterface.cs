@@ -1,4 +1,6 @@
-﻿namespace JLPT.Services
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace JLPT.Services
 {
     public interface IUserDataInterface
     {
@@ -7,5 +9,8 @@
         public List<UserInfo> GetSelectedUserData(List<int> selectedUserIds);
 
         public bool SendEmails(List<int> selectedUserIds, bool testEmail=false);
+
+        public bool IsFileExisted(string filePath);
+        public FileContentResult GetFile(string filePath);
     }
 }
