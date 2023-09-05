@@ -116,11 +116,13 @@ namespace JLPTProcessor.Pages
                         var cols = rows[i].ItemArray.ToList();
                         if ((bool)(cols[8]?.ToString().Equals("Stripe Paid", StringComparison.CurrentCultureIgnoreCase))) //Orders' Status
                         {
+                            string fName = cols[0].ToString();
+                            string lName = cols[2].ToString();
                             string usrEmail = cols[3].ToString();
                             string testLevel = cols[5].ToString();
                             if (ReportType == "Master")
                             {
-                                List<string> results = processMasterQuestionaire(dataSet, usrEmail, testLevel);
+                                List<string> results = processMasterQuestionaire(dataSet, usrEmail, testLevel, fName, lName);
                                 foreach(string result in results)
                                     System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                             }
@@ -129,7 +131,7 @@ namespace JLPTProcessor.Pages
                                 string[] testLevels = cols[5].ToString().Split(",");
                                 foreach (string tLevel in testLevels)
                                 {
-                                    List<string> results = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(tLevel));
+                                    List<string> results = processRegistrationQuestionaire(dataSet, usrEmail, getNumericTestLevel(tLevel), fName, lName);
                                     foreach (string result in results)
                                         System.IO.File.AppendAllText(outFile, $"{result}{Environment.NewLine}"); //print the header
                                 }
@@ -140,7 +142,7 @@ namespace JLPTProcessor.Pages
                 }
             }
         }
-        private List<string> processRegistrationQuestionaire(DataSet dataSet, string email, string testLevels) //Registration Report
+        private List<string> processRegistrationQuestionaire(DataSet dataSet, string email, string testLevels, string fName, string lName) //Registration Report
         {
             //string testLevel = GetTestLevel(dataSet, email);
             List<string> results = new List<string>();
@@ -185,7 +187,7 @@ namespace JLPTProcessor.Pages
                 for (int i = 5; i < rows.Count; i++)//foreach (DataRow row in rows)
                 {
                     var cols = rows[i].ItemArray.ToList();
-                    if (cols[3] == email)//start redaing from line 6 -- headers
+                    if (cols[3] == email && cols[0] == fName && cols[2] == lName)//start redaing from line 6 -- headers
                     {
                         result += extractRegistrationData(rows[i], email);
                         break;
@@ -199,7 +201,7 @@ namespace JLPTProcessor.Pages
             return results;
         }
 
-        private List<string> processMasterQuestionaire(DataSet dataSet, string email, string testLevels) //master Report
+        private List<string> processMasterQuestionaire(DataSet dataSet, string email, string testLevels, string fName, string lName) //master Report
         {
             List<string> results = new List<string>();
             string[] multiLevels = testLevels.Split(",");
@@ -251,7 +253,7 @@ namespace JLPTProcessor.Pages
                 for (int i = 0; i < rows.Count; i++)//foreach (DataRow row in rows)
                 {
                     var cols = rows[i].ItemArray.ToList();
-                    if (cols[3] == email)//start redaing from line 6 -- headers
+                    if (cols[3] == email && cols[0] == fName && cols[2] == lName)//start redaing from line 6 -- headers
                     {
                         result += extractDataMaster(rows[i], email);
                         break;
