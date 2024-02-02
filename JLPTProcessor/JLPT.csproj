@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="AppData\Input\" />
     <Folder Include="AppData\Output\" />
   </ItemGroup>
 

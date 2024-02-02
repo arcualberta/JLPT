@@ -425,7 +425,20 @@ namespace JLPTProcessor.Pages
                 else if (j == 4) //col Gender
                {
                    string gender = cols[j].ToString(); //will position it later
-                    result += gender == "Male" ? "\"M\"," : "\"F\",";
+                    string val = "";
+                    if (gender == "Male")
+                    {
+                        val = "\"M\",";
+                    }
+                    else if(gender == "Female")
+                    {
+                        val = "\"F\",";
+                    }
+                    else
+                    {
+                        val = "\"N/A\",";
+                    }
+                    result += val; //gender == "Male" ? "\"M\"," : "\"F\",";
 
                }
                 else if (j == 5) //col 6rd DOB
